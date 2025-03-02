@@ -1,0 +1,14 @@
+talk/
+/frontend/node_modules/
+/frontend/build/
+__pycache__/
+
+# Ignore build artifacts
+*.pyc
+*.pyo
+*.pyd
+*.log
+*.sqlite3
+*.db
+
+.env
