@@ -184,3 +184,11 @@ class ChangePasswordView(APIView):
 
 
 
+class ListUsersView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        current_user = request.user  # Get the authenticated user
+        users = CustomUser.objects.exclude(id=current_user.id)  # Exclude current user
+        serializer = UserSerializer(users, many=True)  # Serialize the data
+        return Response(serializer.data, status=status.HTTP_200_OK)

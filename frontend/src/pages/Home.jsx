@@ -1,9 +1,11 @@
 import React from 'react'
+import UserList from '../components/chat/UserList'
 
 function Home() {
   return (
-    <div>Home</div>
-  )
+<>
+<UserList />
+</>  )
 }
 
 export default Home
