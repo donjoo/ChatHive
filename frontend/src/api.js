@@ -2,8 +2,8 @@ import axios from "axios";
 import { ACCESS_TOKEN } from "./constants";
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE_URL,
-  // baseURL: "http://192.168.26.202:8000/api/",
+//   baseURL: import.meta.env.REACT_APP_API_BASE_URL,
+  baseURL: "http://localhost:8000/api/",
   timeout: 0,
   validateStatus: function (status) {
     return status >= 200 && status < 500;
@@ -12,6 +12,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
+    console.log(import.meta.env.REACT_APP_API_BASE_URL)
     console.log("requested url :", config.url);
     if (config.url.includes("login/") || config.url.includes("signup/")) {
       return config;
@@ -41,7 +42,7 @@ api.interceptors.response.use(
       try {
         const refreshToken = localStorage.getItem("REFRESH_TOKEN");
         const response = await axios.post(
-          `${process.env.REACT_APP_API_BASE_URL}/token/refresh/`,
+          `${import.meta.env.REACT_APP_API_BASE_URL}/token/refresh/`,
           { refresh: refreshToken }
         );
 

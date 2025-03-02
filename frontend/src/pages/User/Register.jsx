@@ -2,8 +2,8 @@ import React, {useEffect, useState} from 'react'
 // import Form from '../components/Form'
 import { useNavigate , Link} from 'react-router-dom';
 // import { useDispatch } from 'react-redux';
-import api from '../api';
 import { useSelector } from 'react-redux';
+import api from '../../api';
 
 // import { Button } from "@material-tailwind/react";
 
@@ -99,7 +99,7 @@ const Register = () => {
       if (validate()) {
         try {
           console.log(formData)
-          const response = await api.post('signup/',{
+          const response = await api.post('users/signup/',{
             username: formData.username,
             email: formData.email,
             password: formData.password,

@@ -141,8 +141,9 @@ class LoginView(APIView):
                         'email': user.email,
                     },
                      'access': str(refresh.access_token),
-                     'refresh': str(refresh)
-                },status=status.HTTP_200_OK)
+                     'refresh': str(refresh),
+                     "status": 200,
+                },status=status.HTTP_200_OK,)
             else:
                 return Response({'error':'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
         except User.DoesNotExist:

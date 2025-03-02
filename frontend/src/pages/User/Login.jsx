@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import api from "../api";
-import { setAuthData } from "../redux/auth/authSlice";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
+import api from "../../api";
+import { setAuthData } from "../../redux/auth/authSlice";
 // import { clearAuthData } from './authSlice';
 
 const Login = () => {
@@ -18,7 +18,6 @@ const Login = () => {
 
   const user = useSelector((state) => state.auth.user);
 
-  console.log(user);
 
 
   const togglePasswordVisibility = () => {
@@ -28,13 +27,9 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      console.log(process.env.REACT_APP_API_BASE_URL, "heyyyy");
-      console.log(
-        "Attempting to connect to:",
-        process.env.REACT_APP_API_BASE_URL
-      );
+     
 
-      const response = await api.post("login/", { email, password });
+      const response = await api.post("users/login/", { email, password });
       const { user } = response.data;
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("ACCESS_TOKEN", response.data.access);
