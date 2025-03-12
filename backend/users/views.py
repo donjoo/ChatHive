@@ -70,6 +70,8 @@ class SignupView(APIView):
 
 
 class OTPVerificationView(APIView):
+    authentication_classes = []  # Disable authentication globally
+    permission_classes = [AllowAny]  # Allow all users
     def post(self,request):
         try:
             user = User.objects.get(email=request.data['email'])
