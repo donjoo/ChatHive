@@ -8,6 +8,12 @@ import "react-toastify/dist/ReactToastify.css"; // Import default styles
 import { ToastContainer } from 'react-toastify'
 import { Toaster } from 'sonner';
 import VerifyOtp from './pages/User/VerifyOtp'
+import Join from './pages/Chat/join'
+import RoomList from './pages/Chat/join'
+import CreateRoom from './pages/Chat/create'
+import Chat from './pages/Chat/Chat'
+import Chatpage from './pages/Chat/Chatpage'
+import Chatpag from './components/chat/chato'
 
 
 function App() {
@@ -36,7 +42,10 @@ function App() {
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
       <Route path="/verifyotp" element={<VerifyOtp />} />
-
+      <Route path='/join' element={<RoomList/>}/>
+      <Route path='/create' element={<CreateRoom/>}/>
+      <Route path="/chat/:roomName" element={<Chat />} />
+      <Route path="/cht" element={<Chatpag />} />
 
 
     </Routes>

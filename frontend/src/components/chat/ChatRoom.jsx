@@ -35,6 +35,7 @@ const ChatRoom = ({ receiverUsername }) => {
     }, [messages]);
 
     const sendMessage = () => {
+        console.log(currentUser,'currentrruser')
         if (inputValue.trim() !== '' && socketRef.current) {
             const messageData = {
                 sender: currentUser.username,

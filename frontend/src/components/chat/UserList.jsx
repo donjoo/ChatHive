@@ -42,7 +42,7 @@ export default function UserList() {
                 <div className="w-full md:w-1/4 bg-white shadow-lg p-4 border-r border-gray-300">
                     <h2 className="text-xl font-bold mb-4 text-gray-700">Users</h2>
                     <ul className="space-y-2">
-                        {users.map((user) => (
+                        {/* {users.map((user) => (
                             <li
                                 key={user.id}
                                 onClick={() => handleClick(user)}
@@ -53,7 +53,7 @@ export default function UserList() {
                                 </div>
                                 <span className="ml-3 text-gray-800 font-medium">{user.username}</span>
                             </li>
-                        ))}
+                        ))} */}
                     </ul>
                 </div>
             )}
