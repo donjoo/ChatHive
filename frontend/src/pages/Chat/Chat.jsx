@@ -32,7 +32,8 @@ function Chat() {
     }, [dispatch, currentUser]);
     
     useEffect(() => {
-        const ws = new WebSocket(`ws://127.0.0.1:8000/ws/chat/${roomName}/`);
+        const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
+        const ws = new WebSocket(`${wsProtocol}://chathive-56su.onrender.com/ws/chat/${roomName}/`);        
         setSocket(ws);
 
         ws.onmessage = (event) => {
