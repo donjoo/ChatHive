@@ -83,7 +83,7 @@ python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
 pytz==2022.1
 pyxdg==0.27
-PyYAML==5.4.1
+PyYAML==6.0.1
 ratelim==0.1.6
 razorpay==1.4.2
 redis==5.2.1
