@@ -181,6 +181,13 @@ CELERY_TIMEZONE = 'Asia/Kolkata'
 CORS_ALLOW_ALL_ORIGINS = True
 
 
+CORS_ALLOWED_ORIGINS = [
+    "https://chatbw-5uxwjn0ek-donjorois-gmailcoms-projects.vercel.app",  # Replace with your actual frontend URL
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://chatbw-5uxwjn0ek-donjorois-gmailcoms-projects.vercel.app",
+]
 
 
 AUTHENTICATION_BACKENDS = [

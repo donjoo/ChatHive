@@ -194,11 +194,12 @@ const Register = () => {
             {errors.confirmPassword && <span className='text-red-500 text-sm'>{errors.confirmPassword}</span>}
           </div>
 
-        <button 
-          type='submit'
-          className='w-fulll py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transaction duration-200'>
-            SIGNUP
-          </button>
+          <button 
+          type="submit"
+          className="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-200">
+          SIGNUP
+        </button>
+
           
           {/* <Button>SIGNUP</Button> */}
          

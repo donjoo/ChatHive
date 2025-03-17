@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaComments, FaUsers, FaRocket, FaLock } from "react-icons/fa";
 import { useEffect } from "react";
 import { setAuthData } from "../redux/auth/authSlice";
@@ -7,8 +7,21 @@ import { useDispatch, useSelector } from "react-redux";
 const Home = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user)
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Remove tokens and user data
+    localStorage.removeItem("user");
+    localStorage.removeItem("ACCESS_TOKEN");
+    localStorage.removeItem("REFRESH_TOKEN");
+
+    // Clear Redux state
+    dispatch(setAuthData(null));
 
 
+    // Redirect to login page
+    navigate("/login", { replace: true });
+  };
 
 
 
@@ -24,6 +37,20 @@ const Home = () => {
                     <Link to="/" className="text-gray-300 hover:text-white">Home</Link>
                     <Link to="/create" className="text-gray-300 hover:text-white">Create Room</Link>
                     <Link to="/join" className="text-gray-300 hover:text-white">Room List</Link>
+                    <Link to="/login" className="text-gray-300 hover:text-white">Login</Link>
+                    {!user ? (
+            <Link to="/login" className="text-gray-300 hover:text-white">
+              Login
+            </Link>
+          ) : (
+            // Show Logout button if user IS logged in
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 bg-red-500 text-white font-semibold rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+            >
+              Logout
+            </button>
+          )}
                 </div>
             </nav>
 

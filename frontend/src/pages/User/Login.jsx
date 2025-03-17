@@ -112,11 +112,8 @@ const Login = () => {
             <Link to="/register" className="text-blue-500 hover:underline">
               Signup
             </Link>
-            <br />
-            Switch to Admin?
-            <Link to="/admin/login" className="text-blue-500 hover:underline">
-              Admin-Login
-            </Link>
+
+          
           </p>
         </div>
       </div>
