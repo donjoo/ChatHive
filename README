@@ -1,0 +1,89 @@
+ChatHive - Real-Time Chat Application 💬
+
+A real-time chat application built with React, Redux, Django, and WebSockets, allowing users to create and join chat rooms to communicate seamlessly.
+🚀 Features
+
+✅ Real-time messaging with WebSockets
+✅ User authentication using Redux
+✅ Create and join chat rooms dynamically
+✅ Persistent message history
+✅ Responsive UI with Tailwind CSS
+🛠 Tech Stack
+
+    Frontend: React, Redux, React Router, Tailwind CSS
+    Backend: Django, Django Channels, Django REST Framework
+    Database: PostgreSQL
+    WebSockets: Django Channels for real-time communication
+
+📂 Project Structure
+
+chatrooms/
+│── backend/                 # Django backend
+│   ├── chat/                # Chat app logic
+│   ├── users/               # Authentication
+│   ├── db.sqlite3           # Database (if using SQLite)
+│   ├── manage.py            # Django project manager
+│   ├── requirements.txt     # Backend dependencies
+│── frontend/                # React frontend
+│   ├── src/
+│   │   ├── components/      # UI components
+│   │   ├── pages/           # Pages (Chat, Home, Create Room, etc.)
+│   │   ├── redux/           # Redux store
+│   │   ├── api/             # API calls
+│   │   ├── App.js           # Main App component
+│   │   ├── index.js         # Entry point
+│   ├── package.json         # Frontend dependencies
+│── README.md                # Project documentation
+
+⚡ Installation & Setup
+1️⃣ Clone the Repository
+
+git clone https://github.com/yourusername/chatrooms.git
+cd chatrooms
+
+2️⃣ Backend Setup
+
+cd backend
+python -m venv venv
+source venv/bin/activate  # For Windows: venv\Scripts\activate
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
+
+    📌 Make sure Django Channels is configured for WebSockets.
+
+3️⃣ Frontend Setup
+
+cd frontend
+npm install
+npm start
+
+    📌 Open http://localhost:3000 in your browser.
+
+🔧 API Endpoints
+Method	Endpoint	Description
+GET	/rooms/	Get all chat rooms
+POST	/create-room/	Create a new room
+GET	/messages/:room/	Fetch room messages
+🌟 Usage
+
+1️⃣ Sign in / Register (User authentication)
+2️⃣ Create or join a chat room
+3️⃣ Send and receive messages in real time
+🎯 Future Enhancements
+
+✅ User typing indicators
+✅ Private messaging (DMs)
+✅ Read receipts & notifications
+💡 Contributing
+
+    Fork the repository
+    Create a new branch (feature-xyz)
+    Commit changes & push
+    Open a pull request
+
+📜 License
+
+This project is open-source under the MIT License.
+
+🚀 Happy Coding! 😊

@@ -73,7 +73,7 @@ const Home = () => {
 
             {/* Why Choose Us */}
             <section className="bg-gray-800 py-12">
-                <h3 className="text-3xl font-bold text-white text-center mb-8">Why Choose ChatRooms?</h3>
+                <h3 className="text-3xl font-bold text-white text-center mb-8">Why Choose ChatHive?</h3>
                 <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-6">
                     <div className="p-6 text-center">
                         <FaUsers size={50} className="text-blue-500 mx-auto mb-4" />

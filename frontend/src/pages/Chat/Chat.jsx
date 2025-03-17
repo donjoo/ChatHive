@@ -67,7 +67,7 @@ function Chat() {
                 <div className="max-w-5xl mx-auto flex justify-between items-center py-4 px-6">
                     <div className="flex items-center space-x-3">
                         <FaComments size={28} className="text-blue-500" />
-                        <h1 className="text-3xl font-extrabold">ChatRooms</h1>
+                        <h1 className="text-3xl font-extrabold">ChatHive</h1>
                     </div>
                     <div className="space-x-6">
                         <Link to="/" className="text-gray-300 hover:text-white">Home</Link>
