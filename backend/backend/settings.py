@@ -178,17 +178,13 @@ CELERY_RESULT_BACKEND = os.getenv('REDIS_URL', 'redis://redis:6379/0')
 CELERY_TIMEZONE = 'Asia/Kolkata'
 
 
-CORS_ALLOW_ALL_ORIGINS = True
 
 
 CORS_ALLOWED_ORIGINS = [
     "https://chatbw-5uxwjn0ek-donjorois-gmailcoms-projects.vercel.app",  # Replace with your actual frontend URL
 ]
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://chatbw-5uxwjn0ek-donjorois-gmailcoms-projects.vercel.app",
-]
-
+CORS_ALLOW_CREDENTIALS = True
 
 AUTHENTICATION_BACKENDS = [
     'users.authentication_backends.EmailBackend',  # Replace 'myapp' with your app name
