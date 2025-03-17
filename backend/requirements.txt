@@ -70,7 +70,6 @@ python-dotenv==1.0.1
 pytz==2022.1
 ratelim==0.1.6
 redis==5.2.1
-reportlab==3.6.8
 requests==2.32.3
 rsa==4.9
 service-identity==24.2.0
