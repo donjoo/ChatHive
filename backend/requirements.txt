@@ -95,7 +95,6 @@ service-identity==24.2.0
 six==1.17.0
 sqlparse==0.5.3
 ssh-import-id==5.11
-systemd-python==234
 texttable==1.6.4
 tomli==2.2.1
 Twisted==24.11.0
