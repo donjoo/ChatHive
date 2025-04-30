@@ -106,9 +106,10 @@ const Register = () => {
           });
 
           console.log(response,'heyyeyeyeye')
-          navigate('/verifyotp', {
-            state: { email: formData.email },
-          });
+          navigate('/login')
+          // navigate('/verifyotp', {
+          //   state: { email: formData.email },
+          // });
         }catch (error) {
           console.error('Signup failed:' , error);
           setErr("Signup Failed")
