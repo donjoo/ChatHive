@@ -10,27 +10,84 @@ from datetime import timedelta
 
 User = get_user_model()
 
-
 class UserSerializer(serializers.ModelSerializer):
-
-
+    # ────────────────────────────────────────────────────────────────
+    #  Explicit field definitions so we can attach validators
+    # ────────────────────────────────────────────────────────────────
+    username = serializers.CharField(
+        max_length=150,
+        validators=[
+            RegexValidator(
+                regex=r"^[A-Za-z]+$",
+                message="Username can only contain letters (no numbers or special characters)."
+            )
+        ],
+    )
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
-        fields = ('id','username','email','password', 'is_active','is_deleted','email_verified','date_joined')
-        extra_kwargs = {'password':{'write_only':True}}
-    
+        fields = (
+            "id",
+            "username",
+            "email",
+            "password",
+            "is_active",
+            "is_deleted",
+            "email_verified",
+            "date_joined",
+        )
+        extra_kwargs = {"password": {"write_only": True}}
+
+    # ────────────────────────────────────────────────────────────────
+    #  Creation – keep the same behaviour (hashes password for us)
+    # ────────────────────────────────────────────────────────────────
     def create(self, validated_data):
-        user = User.objects.create_user(**validated_data)
-        return user
-    
+        return User.objects.create_user(**validated_data)
+
+    # ────────────────────────────────────────────────────────────────
+    #  Field-level validation
+    # ────────────────────────────────────────────────────────────────
     def validate_email(self, value):
-        user = self.instance  
-        if user and value != user.email:  # Check if the email is changing
+        """
+        • Must be unique (for new users or if the email is being changed).
+        """
+        user = self.instance  # `None` if creating
+
+        email_is_changing = user and value != user.email
+        creating_new_user = user is None
+
+        if creating_new_user or email_is_changing:
             if User.objects.filter(email=value).exists():
-                raise ValidationError('A user with this email address already exists. Please use a different email.')
+                raise ValidationError(
+                    "A user with this email address already exists. Please use a different email."
+                )
+
         return value
-        
+
+    def validate_password(self, value):
+        """
+        • ≥ 8 chars
+        • ≥ 1 upper, 1 lower, 1 digit, 1 special
+        • Plus Django’s built-in strong-password checks
+        """
+        if len(value) < 8:
+            raise ValidationError("Password must be at least 8 characters.")
+
+        pattern = re.compile(
+            r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$"
+        )
+        if not pattern.match(value):
+            raise ValidationError(
+                "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character."
+            )
+
+        # Optional—but recommended—extra strength checks from Django
+        django_validate_password(value)
+
+        return value
+
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
