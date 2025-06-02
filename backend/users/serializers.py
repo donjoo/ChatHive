@@ -6,7 +6,8 @@ from rest_framework.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.utils.timezone import now
 from datetime import timedelta
-
+from django.core.validators import RegexValidator
+from django.contrib.auth.password_validation import validate_password as django_validate_password
 
 User = get_user_model()
 
