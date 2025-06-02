@@ -5,22 +5,21 @@ from users.models import CustomUser
 from rest_framework.permissions import IsAuthenticated
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def create_room(request):
-    permission_classes = [IsAuthenticated]
-    
     name = request.data.get('name')
     user = request.user  # Ensure authentication
     room, created = Room.objects.get_or_create(name=name, defaults={'created_by': user})
     return Response({"room_id": room.id, "room_name": room.name})
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def list_rooms(request):
-    permission_classes = [IsAuthenticated]
-    
     rooms = Room.objects.all().values("id", "name")
     return Response({"rooms": list(rooms)})
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_messages(request, room_name):
     try:
         room = Room.objects.get(name=room_name)
