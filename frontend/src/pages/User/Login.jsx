@@ -13,7 +13,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [error, setError] = useState();
+  const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const user = useSelector((state) => state.auth.user);
@@ -26,10 +26,22 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    
+    setError(""); 
+    console.log("About to call..") 
     try {
      
-
+      console.log("About to call API") 
       const response = await api.post("users/login/", { email, password });
+      if (response.status !== 200) {
+        const errMsg =
+          response.data?.error ||
+          response.data?.message ||
+          "Login failed. Please check your credentials.";
+        setError(errMsg);
+        // toast.error(errMsg);
+        return;
+      }
       const { user } = response.data;
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("ACCESS_TOKEN", response.data.access);
@@ -40,24 +52,21 @@ const Login = () => {
       if (response.data.status === 200) {
       navigate("/", { replace: true });
       }
-      if (response.data.status === 400) {
-        toast.error('Login faliled.Please check your credentials.');
-        }
+      console.log("About to callsdsddwdwdwd API") 
     } catch (error) {
-      console.error("Login Failed:", error);
-      console.error("Login failed:", error?.response?.data || error.message);
-      console.error("Login Failed:", {
-        message: error.message,
-        status: error?.response?.status,
-        data: error?.response?.data,
-        config: error?.config,
-      });
-      setError("Login faliled.Please check your credentials");
+      console.log("About catchhhhh") 
+      const errMsg =
+      error.response?.data?.error ||
+      error.response?.data?.message ||
+      "Login failed. Please check your credentials.";
+    setError(errMsg);
+    toast.error(errMsg);
+    console.error("Login Failed:", error);
+
     }
   };
 
 
-  console.log(user);
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
@@ -95,6 +104,7 @@ const Login = () => {
               {/* Change the icon based on visibility */}
             </span>
           </div>
+      
           <button
             type="submit"
             className="w-full py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -103,9 +113,9 @@ const Login = () => {
           </button>
         </form>
 
-        
+  
 
-        {error && <div className="mt-4 text-red-500 text-center">{error}</div>}
+        {error && <div className="mt-4 bg-red-100 text-red-700 text-center">{error}</div>}
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
             Don't have an account?

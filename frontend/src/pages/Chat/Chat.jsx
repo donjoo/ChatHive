@@ -38,6 +38,12 @@ function Chat() {
 
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
+
+            if (data.message === "Token is invalid or expired" || data.error) {
+            console.warn("Received server error:", data);
+            return;
+        }
+
             setMessages((prev) => [...prev, data]);
         };
 

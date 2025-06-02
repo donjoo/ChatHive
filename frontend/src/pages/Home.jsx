@@ -35,21 +35,25 @@ const Home = () => {
                 </div>
                 <div className="space-x-6">
                     <Link to="/" className="text-gray-300 hover:text-white">Home</Link>
-                    <Link to="/create" className="text-gray-300 hover:text-white">Create Room</Link>
-                    <Link to="/join" className="text-gray-300 hover:text-white">Room List</Link>
-                    <Link to="/login" className="text-gray-300 hover:text-white">Login</Link>
+                    {/* <Link to="/create" className="text-gray-300 hover:text-white">Create Room</Link>
+                    <Link to="/join" className="text-gray-300 hover:text-white">Room List</Link> */}
+                    {/* <Link to="/login" className="text-gray-300 hover:text-white">Login</Link> */}
                     {!user ? (
             <Link to="/login" className="text-gray-300 hover:text-white">
               Login
             </Link>
           ) : (
-            // Show Logout button if user IS logged in
+            <>
+                    <Link to="/create" className="text-gray-300 hover:text-white">Create Room</Link>
+                    <Link to="/join" className="text-gray-300 hover:text-white">Room List</Link>
+
             <button
               onClick={handleLogout}
               className="px-4 py-2 bg-red-500 text-white font-semibold rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
             >
               Logout
             </button>
+            </>
           )}
                 </div>
             </nav>
@@ -62,6 +66,15 @@ const Home = () => {
                     Join an existing chat room or create your own!
                 </p>
                 <div className="flex justify-center space-x-6">
+
+
+{!user ? (
+  <Link to="/login" className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg text-lg transition transform hover:scale-105">
+              Login to get started....
+            </Link>
+          ) : (
+            <>
+
                     <Link 
                         to="/join" 
                         className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg text-lg transition transform hover:scale-105"
@@ -74,6 +87,10 @@ const Home = () => {
                     >
                         Create a Room
                     </Link>
+
+
+</> )}
+
                 </div>
             </section>
 

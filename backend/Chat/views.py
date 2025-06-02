@@ -2,9 +2,12 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import Room, Message
 from users.models import CustomUser
+from rest_framework.permissions import IsAuthenticated
 
 @api_view(['POST'])
 def create_room(request):
+    permission_classes = [IsAuthenticated]
+    
     name = request.data.get('name')
     user = request.user  # Ensure authentication
     room, created = Room.objects.get_or_create(name=name, defaults={'created_by': user})
@@ -12,6 +15,8 @@ def create_room(request):
 
 @api_view(['GET'])
 def list_rooms(request):
+    permission_classes = [IsAuthenticated]
+    
     rooms = Room.objects.all().values("id", "name")
     return Response({"rooms": list(rooms)})
 

@@ -12,7 +12,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    console.log(import.meta.env.REACT_APP_API_BASE_URL)
+    console.log(import.meta.env.REACT_API_BASE_URL)
     console.log("requested url :", config.url);
     if (config.url.includes("login/") || config.url.includes("signup/")) {
       return config;
@@ -42,7 +42,7 @@ api.interceptors.response.use(
       try {
         const refreshToken = localStorage.getItem("REFRESH_TOKEN");
         const response = await axios.post(
-          `${import.meta.env.REACT_APP_API_BASE_URL}/token/refresh/`,
+          `${import.meta.env.REACT_API_BASE_URL}/token/refresh/`,
           { refresh: refreshToken }
         );
 
