@@ -28,4 +28,49 @@ class SignupViewTest(APITestCase):
         }
         response=self.client.post(url,data,format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        
+
+
+
+class LoginViewTest(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='loginuser',
+            email='login@example.com',
+            password='mypassword'
+        )
+        self.user.is_active = True
+        self.user.save()
+
+    def test_login_success(self):
+        url = reverse('users:login')
+        data = {
+            "email":"login@example.com",
+            "password":'mypassword'
+        }
+        response = self.client.post(url,data,format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('access',response.data)
+
+
+    def test_login_wrong_password(self):
+        url = reverse('users:login')
+        data = {
+            "email":"login@example.com",
+            "password":'wrongpassword',
+        }
+        response = self.client.post(url,data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('error',response.data)
+
+
+        def test_login_inactive_user(self):
+            self.user.is_active =False
+            self.user.save()
+            url = reverse('users:login')
+            data = {
+                "email":"login@example.com",
+                "password":"mypassword"
+            }
+
+            response = self.client.post(url,data,format='json')
+            self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
