@@ -3,6 +3,8 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from django.contrib.auth import get_user_model
 from users.models import UserProfile
+from users.serializers import UserSerializer,UserProfileSerializer
+
 
 User = get_user_model()
 
@@ -74,3 +76,22 @@ class LoginViewTest(APITestCase):
 
             response = self.client.post(url,data,format='json')
             self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+
+# testcase for serializers
+
+
+class UserSerializerTest(APITestCase):
+    def test_valid_user_creation(self):
+        data = {
+            "username":"Donjo",
+            "email":"don@example.com",
+            "password":"StrongP@ssword1"
+        }
+        serializer = UserSerializer(data = data)
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+        user = serializer.save()
+        self.assertEqual(user.email,data['email'])
+        self.assertNotEqual(user.password, data['password'])
+
