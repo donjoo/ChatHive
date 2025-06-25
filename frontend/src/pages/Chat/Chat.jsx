@@ -67,6 +67,18 @@ function Chat() {
         }
     };
 
+
+        const formatTime = (timestamp) => {
+        if (!timestamp) return "";
+        const date = new Date(timestamp);
+        return date.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true
+        });
+    };
+
+
     return (
         <div className="bg-gray-900 text-white min-h-screen flex flex-col items-center">
             {/* Navbar */}
@@ -98,10 +110,10 @@ function Chat() {
         </div>
         <div className="text-sm">{msg.message || msg.content}</div>
         {msg.timestamp && (
-            <div className="text-xs text-gray-300 mt-1 text-right">
-                {msg.timestamp}
-            </div>
-        )}
+                                <div className="text-xs text-gray-300 mt-1 text-right">
+                                    {formatTime(msg.timestamp)}
+                                </div>
+                            )}
     </div>
 ))}
                 </div>

@@ -4,7 +4,6 @@ from channels.db import database_sync_to_async
 from .models import Message, Room
 from users.models import CustomUser
 import datetime
-import pytz
 
 
 
