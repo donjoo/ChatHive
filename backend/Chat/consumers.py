@@ -44,7 +44,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # timestamp = datetime.datetime.now().strftime("%I:%M %p")  # Format: HH:MM AM/PM
         # timestamp = datetime.datetime.now().isoformat()
         india_time = datetime.datetime.now(pytz.timezone("Asia/Kolkata"))
-        event["timestamp"] = timestamp
+        event["timestamp"] =  india_time.isoformat()
         await self.send(text_data=json.dumps(event))
 
     @database_sync_to_async
