@@ -25,8 +25,16 @@ def list_rooms(request):
 def get_messages(request, room_name):
     try:
         room = Room.objects.get(name=room_name)
-        messages = Message.objects.filter(room=room).values("sender__username", "content", "timestamp")
-        print(messages)
+        messages = Message.objects.filter(room=room)
+        message_data = [
+            {
+                "sender__username": msg.sender.username,
+                "content": msg.content,
+                "timestamp": DateFormat(msg.timestamp).format("h:i A")  # Format: HH:MM AM/PM
+            }
+            for msg in messages
+        ]
+        return Response({"messages": message_data})
         return Response({"messages": list(messages)})
     except Room.DoesNotExist:
         return Response({"error": "Room not found"}, status=404)

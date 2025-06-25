@@ -3,6 +3,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from .models import Message, Room
 from users.models import CustomUser
+import datetime
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -38,6 +39,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             )
 
     async def chat_message(self, event):
+        timestamp = datetime.datetime.now().strftime("%I:%M %p")  # Format: HH:MM AM/PM
+        event["timestamp"] = timestamp
         await self.send(text_data=json.dumps(event))
 
     @database_sync_to_async

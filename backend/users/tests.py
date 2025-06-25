@@ -93,5 +93,6 @@ class UserSerializerTest(APITestCase):
         self.assertTrue(serializer.is_valid(), serializer.errors)
         user = serializer.save()
         self.assertEqual(user.email,data['email'])
+        self.assertEqual(user.username, data["username"])
         self.assertNotEqual(user.password, data['password'])
 

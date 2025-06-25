@@ -88,11 +88,22 @@ function Chat() {
             <div className="w-full max-w-2xl p-6 bg-gray-800 rounded-lg shadow-xl mt-20">
                 <h2 className="text-3xl font-bold text-center mb-4">Chat Room: {roomName}</h2>
                 <div className="overflow-y-auto h-96 p-4 bg-gray-700 rounded-lg mb-4 space-y-2">
-                    {messages.map((msg, index) => (
-                        <div key={index} className={`p-3 rounded-lg ${msg.username === currentUser.username ? 'bg-blue-500 text-white ml-auto' : 'bg-gray-600'} max-w-xs`}>
-                            <strong>{msg.username || msg.sender__username}:</strong> {msg.message || msg.content}
-                        </div>
-                    ))}
+         {messages.map((msg, index) => (
+    <div 
+        key={index} 
+        className={`p-3 rounded-lg ${msg.username === currentUser.username ? 'bg-blue-500 text-white ml-auto' : 'bg-gray-600'} max-w-xs`}
+    >
+        <div className="text-sm font-semibold">
+            {msg.username || msg.sender__username}
+        </div>
+        <div className="text-sm">{msg.message || msg.content}</div>
+        {msg.timestamp && (
+            <div className="text-xs text-gray-300 mt-1 text-right">
+                {msg.timestamp}
+            </div>
+        )}
+    </div>
+))}
                 </div>
                 <div className="flex items-center space-x-3">
                     <input
