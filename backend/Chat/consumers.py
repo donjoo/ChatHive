@@ -4,7 +4,7 @@ from channels.db import database_sync_to_async
 from .models import Message, Room
 from users.models import CustomUser
 import datetime
-
+import pytz
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -42,7 +42,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def chat_message(self, event):
         # timestamp = datetime.datetime.now().strftime("%I:%M %p")  # Format: HH:MM AM/PM
-        timestamp = datetime.datetime.now().isoformat()
+        # timestamp = datetime.datetime.now().isoformat()
+        india_time = datetime.datetime.now(pytz.timezone("Asia/Kolkata"))
         event["timestamp"] = timestamp
         await self.send(text_data=json.dumps(event))
 
