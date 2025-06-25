@@ -94,29 +94,61 @@ const Register = () => {
   };
 
 
+    // const handleSignup = async (e) => {
+    //   e.preventDefault();
+    //   if (validate()) {
+    //     try {
+    //       console.log(formData)
+    //       const response = await api.post('users/signup/',{
+    //         username: formData.username,
+    //         email: formData.email,
+    //         password: formData.password,
+    //       });
+
+    //       console.log(response,'heyyeyeyeye')
+    //       navigate('/login')
+    //       // navigate('/verifyotp', {
+    //       //   state: { email: formData.email },
+    //       // });
+    //     }catch (error) {
+    //       console.error('Signup failed:' , error);
+    //       setErr("Signup Failed")
+    //     }
+    //   }
+    // };
+
     const handleSignup = async (e) => {
       e.preventDefault();
+
       if (validate()) {
         try {
-          console.log(formData)
-          const response = await api.post('users/signup/',{
+          const response = await api.post('users/signup/', {
             username: formData.username,
             email: formData.email,
             password: formData.password,
           });
 
-          console.log(response,'heyyeyeyeye')
-          navigate('/login')
-          // navigate('/verifyotp', {
-          //   state: { email: formData.email },
-          // });
-        }catch (error) {
-          console.error('Signup failed:' , error);
-          setErr("Signup Failed")
+          // Success: redirect to login page
+          navigate('/login');
+        } catch (error) {
+          console.error('Signup failed:', error);
+
+          // Try to extract readable error message
+          if (error.response && error.response.data) {
+            const errorData = error.response.data;
+
+            // If the response includes field-specific errors
+            const messages = Object.values(errorData)
+              .flat()
+              .join(' ');
+
+            setErr(messages || 'Signup failed. Please try again.');
+          } else {
+            setErr('Something went wrong. Please try again later.');
+          }
         }
       }
     };
-
 
 
 

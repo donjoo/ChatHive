@@ -24,47 +24,91 @@ const Login = () => {
     setShowPassword((prevState) => !prevState);
   };
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  // const handleLogin = async (e) => {
+  //   e.preventDefault();
     
-    setError(""); 
-    console.log("About to call..") 
-    try {
+  //   setError(""); 
+  //   console.log("About to call..") 
+  //   try {
      
-      console.log("About to call API") 
-      const response = await api.post("users/login/", { email, password });
-      if (response.status !== 200) {
-        const errMsg =
-          response.data?.error ||
-          response.data?.message ||
-          "Login failed. Please check your credentials.";
-        setError(errMsg);
-        // toast.error(errMsg);
-        return;
-      }
-      const { user } = response.data;
-      localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("ACCESS_TOKEN", response.data.access);
-      localStorage.setItem("REFRESH_TOKEN", response.data.refresh);
-      // const {user,token} = response.data;
-      // localStorage.setItem('ACCESS_TOKEN',token);
-      dispatch(setAuthData(response.data));
-      if (response.data.status === 200) {
-      navigate("/", { replace: true });
-      }
-      console.log("About to callsdsddwdwdwd API") 
-    } catch (error) {
-      console.log("About catchhhhh") 
+  //     console.log("About to call API") 
+  //     const response = await api.post("users/login/", { email, password });
+  //     if (response.status !== 200) {
+  //       const errMsg =
+  //         response.data?.error ||
+  //         response.data?.message ||
+  //         "Login failed. Please check your credentials.";
+  //       setError(errMsg);
+  //       // toast.error(errMsg);
+  //       return;
+  //     }
+  //     const { user } = response.data;
+  //     localStorage.setItem("user", JSON.stringify(user));
+  //     localStorage.setItem("ACCESS_TOKEN", response.data.access);
+  //     localStorage.setItem("REFRESH_TOKEN", response.data.refresh);
+  //     // const {user,token} = response.data;
+  //     // localStorage.setItem('ACCESS_TOKEN',token);
+  //     dispatch(setAuthData(response.data));
+  //     if (response.data.status === 200) {
+  //     navigate("/", { replace: true });
+  //     }
+  //     console.log("About to callsdsddwdwdwd API") 
+  //   } catch (error) {
+  //     console.log("About catchhhhh") 
+  //     const errMsg =
+  //     error.response?.data?.error ||
+  //     error.response?.data?.message ||
+  //     "Login failed. Please check your credentials.";
+  //   setError(errMsg);
+  //   toast.error(errMsg);
+  //   console.error("Login Failed:", error);
+
+  //   }
+  // };
+
+  const handleLogin = async (e) => {
+  e.preventDefault();
+  setError(""); // clear previous error
+
+  try {
+    const response = await api.post("users/login/", { email, password });
+
+    // ✅ Handle non-200 response (defensive, although axios throws on error by default)
+    if (response.status !== 200) {
       const errMsg =
+        response.data?.error ||
+        response.data?.message ||
+        "Login failed. Please check your credentials.";
+      setError(errMsg);
+      toast.error(errMsg);
+      return;
+    }
+
+    const { user, access, refresh, status } = response.data;
+
+    // ✅ Save tokens and user
+    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("ACCESS_TOKEN", access);
+    localStorage.setItem("REFRESH_TOKEN", refresh);
+
+    // ✅ Update Redux auth state
+    dispatch(setAuthData(response.data));
+
+    // ✅ Navigate only if status is 200
+    if (status === 200) {
+      navigate("/", { replace: true });
+    }
+
+  } catch (error) {
+    const errMsg =
       error.response?.data?.error ||
       error.response?.data?.message ||
       "Login failed. Please check your credentials.";
     setError(errMsg);
     toast.error(errMsg);
     console.error("Login Failed:", error);
-
-    }
-  };
+  }
+};
 
 
   return (

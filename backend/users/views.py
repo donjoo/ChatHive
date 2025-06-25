@@ -27,32 +27,29 @@ User = get_user_model()
 
 class SignupView(APIView):
     permission_classes = [AllowAny]
-    def post(self,request):
+    def post(self, request):
         data = request.data
-        mapped_data = {
+        serializer = UserSerializer(data={
             "username": data.get("username"),
             "email": data.get("email"),
-            "password": data.get("password"),
-        }
-        serializer = UserSerializer(data=mapped_data)
+            "password": data.get("password")
+        })
+
         if serializer.is_valid():
-           
             user = serializer.save()
+            user.is_active = True  # Make sure the user is active
+            user.save()
+
             UserProfile.objects.create(user=user)
 
-            try:
-                self.send_otp_email(serializer.data['email'])
-            except Exception as e:
-                print(f"Error occurred during OTP sending: {str(e)}")
-                return Response({"Message":"unknown error","error":str(e)},status=500)
-
-           
             refresh = RefreshToken.for_user(user)
             return Response({
                 'user': UserSerializer(user).data,
                 'token': str(refresh.access_token)
             }, status=status.HTTP_201_CREATED)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
     def send_otp_email(self,email):
@@ -124,32 +121,36 @@ class ResendOTPView(APIView):
 
 class LoginView(APIView):
     permission_classes = [AllowAny]
-    def post(self,request):
-        data = request.data
-        email = data.get('email')
-        password = data.get('password')
+    def post(self, request):
+        email = request.data.get('email')
+        password = request.data.get('password')
+
         try:
             user = User.objects.get(email=email)
-            user = authenticate(request, email=email, password=password)
-            # if user.check_password(password):
-            if user is not None:
-                if not user.is_active:
-                        return Response({'error':'Your account has been blocked.'}, status=status.HTTP_403_FORBIDDEN)
-                refresh = RefreshToken.for_user(user)
-                return Response({
-                    'user': {
-                        'id': user.id,
-                        'username': user.username,
-                        'email': user.email,
-                    },
-                     'access': str(refresh.access_token),
-                     'refresh': str(refresh),
-                     "status": 200,
-                },status=status.HTTP_200_OK,)
-            else:
-                return Response({'error':'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
         except User.DoesNotExist:
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = authenticate(request, email=email, password=password)
+
+        if user is not None:
+            if not user.is_active:
+                return Response({'error': 'Your account has been blocked.'}, status=status.HTTP_403_FORBIDDEN)
+
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                'user': {
+                    'id': user.id,
+                    'username': user.username,
+                    'email': user.email,
+                },
+                'access': str(refresh.access_token),
+                'refresh': str(refresh),
+                "status": 200,
+            }, status=status.HTTP_200_OK)
+        
+        return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+
+
        
 
 class SendOtpView(APIView):
