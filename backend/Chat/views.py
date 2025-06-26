@@ -27,11 +27,12 @@ def get_messages(request, room_name):
     try:
         room = Room.objects.get(name=room_name)
         messages = Message.objects.filter(room=room)
+        india_tz = pytz.timezone("Asia/Kolkata")
         message_data = [
             {
                 "sender__username": msg.sender.username,
                 "content": msg.content,
-                "timestamp": DateFormat(msg.timestamp).format("h:i A")  # Format: HH:MM AM/PM
+                "timestamp": msg.timestamp.astimezone(india_tz).isoformat()
             }
             for msg in messages
         ]
