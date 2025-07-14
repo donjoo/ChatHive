@@ -1,13 +1,19 @@
 import { Link, useNavigate } from "react-router-dom";
 import { FaComments, FaUsers, FaRocket, FaLock } from "react-icons/fa";
 import { useEffect } from "react";
-import { setAuthData } from "../redux/auth/authSlice";
+import { clearAuthData } from "../redux/auth/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 const Home = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user)
   const navigate = useNavigate();
+
+    useEffect(() => {
+    if (!user) {
+        navigate("/",{ replace: true });
+    }
+    }, [user,navigate]);
 
   const handleLogout = () => {
     // Remove tokens and user data
@@ -16,11 +22,7 @@ const Home = () => {
     localStorage.removeItem("REFRESH_TOKEN");
 
     // Clear Redux state
-    dispatch(setAuthData(null));
-
-
-    // Redirect to login page
-    navigate("/login", { replace: true });
+    dispatch(clearAuthData());
   };
 
 
