@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import api from "../../api";
 import { useDispatch, useSelector } from "react-redux";
-import { setAuthData } from "../../redux/auth/authSlice";
+import { setAuthData,clearAuthData } from "../../redux/auth/authSlice";
 import { FaPaperPlane, FaComments } from "react-icons/fa";
 import { toast } from "sonner";
 
@@ -31,6 +31,47 @@ function Chat() {
             }
         }
     }, [dispatch, currentUser]);
+
+    const attemptReconnect = () => {
+    console.log("🔁 Attempting to reconnect in 3 seconds...");
+
+    setTimeout(() => {
+        if (!navigator.onLine) {
+        console.warn("⚠️ Still offline. Skipping reconnect.");
+        return;
+        }
+
+        // Try to open the socket again
+        const token = localStorage.getItem("ACCESS_TOKEN");
+        if (!token) return;
+
+        const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
+        const newSocket = new WebSocket(`${wsProtocol}://chathive-56su.onrender.com/ws/chat/${roomName}/?token=${token}`);
+        
+        // Attach new listeners
+        newSocket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.error || data.message === "Token is invalid or expired") {
+            console.warn("❌ Auth issue on reconnect");
+            return;
+        }
+        setMessages(prev => [...prev, data]);
+        };
+
+        newSocket.onerror = (e) => {
+        console.error("WebSocket reconnect error:", e);
+        };
+
+        newSocket.onclose = () => {
+        console.warn("❌ Reconnect failed. Trying again...");
+        attemptReconnect(); // 🔁 try again
+        };
+
+        // Replace old socket
+        setSocket(newSocket);
+    }, 5000); // wait 3 seconds before trying
+    };
+
     
     useEffect(() => {
             const token = localStorage.getItem("ACCESS_TOKEN");
@@ -50,6 +91,9 @@ function Chat() {
 
             if (data.message === "Token is invalid or expired" || data.error) {
             console.warn("Received server error:", data);
+            toast.error("Session expired. Please log in again.");
+            dispatch(clearAuthData());
+            navigate("/", { replace: true });
             return;
         }
 
@@ -59,12 +103,19 @@ function Chat() {
 
         ws.onclose = (event) => {
         console.warn("WebSocket connection closed:", event);
-        // alert("WebSocket connection was closed. Please log in again.");
-        toast.error("WebSocket connection was closed. Please log in again.");
-        // Optionally redirect
-        // navigate("/login");
+        // toast.error("connection was closed. Please log in again.");
+        setSocket(null); // prevent future sends
+        if (event.code !== 1000) {
+        toast.warning("Lost connection. Trying to reconnect...");
+        }
+        attemptReconnect(); // 👈 try again
+
         };
 
+        ws.onerror = (event) => {
+            console.error("WebSocket error:", event);
+            toast.error("⚠️ connection error occurred. Messages may not be sent.");
+        };
         api.get(`messages/${roomName}/`).then((res) => {
             setMessages(res.data.messages);
         });
@@ -72,18 +123,34 @@ function Chat() {
         return () => ws.close();
     }, [roomName]);
 
-    const sendMessage = () => {
-        if (socket && message.trim() !== "") {
-            socket.send(
-                JSON.stringify({ 
-                    message, 
-                    username: currentUser.username, 
-                    room: roomName  
-                })
-            );
-            setMessage("");
-        }
-    };
+const sendMessage = () => {
+    if (!socket || socket.readyState !== WebSocket.OPEN) {
+        toast.error("⚠️ Connection lost. Unable to send message.");
+        console.warn("❌ WebSocket is not open. Message not sent.");
+        attemptReconnect(); 
+        return;
+    }
+
+    if (message.trim() === "") {
+        return; // don't send empty messages
+    }
+
+    try {
+        socket.send(
+            JSON.stringify({ 
+                message, 
+                username: currentUser?.username, 
+                room: roomName  
+            })
+        );
+        setMessage("");
+    } catch (error) {
+        console.error("🚨 Failed to send message:", error);
+        toast.error("❌ Failed to send message. Please try again.");
+        attemptReconnect(); 
+    }
+};
+
 
 
         const formatTime = (timestamp) => {
