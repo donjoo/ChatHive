@@ -5,6 +5,12 @@ from .models import Message, Room
 from users.models import CustomUser
 import datetime
 import pytz
+from urllib.parse import parse_qs
+from rest_framework_simplejwt.tokens import AccessToken
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
