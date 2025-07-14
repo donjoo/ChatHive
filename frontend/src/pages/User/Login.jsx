@@ -15,6 +15,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const user = useSelector((state) => state.auth.user);
 
@@ -71,6 +72,7 @@ const Login = () => {
   setError(""); // clear previous error
 
   try {
+    setLoading(true);
     const response = await api.post("users/login/", { email, password });
 
     // ✅ Handle non-200 response (defensive, although axios throws on error by default)
@@ -107,6 +109,8 @@ const Login = () => {
     setError(errMsg);
     toast.error(errMsg);
     console.error("Login Failed:", error);
+  } finally {
+    setLoading(false);
   }
 };
 
@@ -150,10 +154,14 @@ const Login = () => {
           </div>
       
           <button
+          //   type="submit"
+          //   className="w-full py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          // >
+          //   LOGIN
             type="submit"
-            className="w-full py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            LOGIN
+            disabled={loading}
+            className={`w-full py-2 text-white rounded-lg transition duration-200 ${loading ? 'bg-gray-400' : 'bg-blue-500 hover:bg-blue-600'}`}>
+            {loading ? "loging in..." : "LOGIN"}
           </button>
         </form>
 

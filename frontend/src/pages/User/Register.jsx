@@ -15,7 +15,8 @@ const Register = () => {
   const user = useSelector((state) => state.auth.user)
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  
+  const [loading, setLoading] = useState(false);
+
 
   useEffect(() => {
     if (user) {
@@ -121,6 +122,7 @@ const Register = () => {
       e.preventDefault();
 
       if (validate()) {
+        setLoading(true); // Start loader
         try {
           const response = await api.post('users/signup/', {
             username: formData.username,
@@ -146,7 +148,10 @@ const Register = () => {
           } else {
             setErr('Something went wrong. Please try again later.');
           }
-        }
+          
+        } finally {
+      setLoading(false); // Stop loader
+    }
       }
     };
 
@@ -228,9 +233,13 @@ const Register = () => {
           </div>
 
           <button 
-          type="submit"
-          className="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-200">
-          SIGNUP
+          // type="submit"
+          // className="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-200">
+          // SIGNUP
+            type="submit"
+            disabled={loading}
+            className={`w-full py-2 text-white rounded-lg transition duration-200 ${loading ? 'bg-gray-400' : 'bg-blue-500 hover:bg-blue-600'}`}>
+            {loading ? "Signing Up..." : "SIGNUP"}
         </button>
 
           
