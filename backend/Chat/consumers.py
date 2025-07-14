@@ -9,6 +9,29 @@ import pytz
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
+        query_string = self.scope["query_string"].decode()
+        query_params = parse_qs(query_string)
+        token = query_params.get("token", [None])[0]
+
+        if token is None:
+            await self.close()
+            return
+
+        try:
+            # ✅ Decode and validate JWT token
+            access_token = AccessToken(token)
+            user_id = access_token['user_id']
+            self.user = await self.get_user_by_id(user_id)
+
+            if self.user is None:
+                await self.close()
+                return
+
+        except Exception as e:
+            print("Token error:", e)
+            await self.close()
+            return
+
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = f"chat_{self.room_name}"
 
@@ -22,21 +45,21 @@ class ChatConsumer(AsyncWebsocketConsumer):
         print(f"Received WebSocket Data: {text_data}")
         data = json.loads(text_data)
         message = data['message']
-        username = data['username']
+        # username = data['username']
         room_name = data['room']
 
-        user = await self.get_user(username)
+        # user = await self.get_user(username)
         room = await self.get_room(room_name)
 
-        if user and room:
-            await self.save_message(user, room, message)
+        if self.user and room:
+            await self.save_message(self.user, room, message)
 
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
                     'type': 'chat_message',
                     'message': message,
-                    'username': username
+                    'username': self.user.username
                 }
             )
 
@@ -52,6 +75,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
         user = CustomUser.objects.filter(username=username).first()
         print(f"🔍 Fetching User: {username} -> {user}")  # Debugging
         return user
+
+    @database_sync_to_async
+    def get_user_by_id(self, user_id):
+        return User.objects.filter(id=user_id).first()
 
     @database_sync_to_async
     def get_room(self, room_name):
