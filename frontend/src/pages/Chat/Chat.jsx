@@ -15,6 +15,8 @@ function Chat() {
     const [message, setMessage] = useState("");
     const [socket, setSocket] = useState(null);
     const dispatch = useDispatch();
+    const [reconnectAttempts, setReconnectAttempts] = useState(0);
+
 
     useEffect(() => {
         if (!currentUser) {
@@ -40,6 +42,13 @@ function Chat() {
         console.warn("⚠️ Still offline. Skipping reconnect.");
         return;
         }
+        if (reconnectAttempts >= 5) {
+            toast.error("Unable to reconnect. Please refresh the page.");
+            return;
+        }
+
+        setReconnectAttempts(prev => prev + 1);
+
 
         // Try to open the socket again
         const token = localStorage.getItem("ACCESS_TOKEN");
