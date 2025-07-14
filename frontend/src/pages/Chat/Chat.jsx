@@ -6,6 +6,7 @@ import api from "../../api";
 import { useDispatch, useSelector } from "react-redux";
 import { setAuthData } from "../../redux/auth/authSlice";
 import { FaPaperPlane, FaComments } from "react-icons/fa";
+import { toast } from "sonner";
 
 function Chat() {
     const currentUser = useSelector((state) => state.auth.user);
@@ -32,8 +33,16 @@ function Chat() {
     }, [dispatch, currentUser]);
     
     useEffect(() => {
+            const token = localStorage.getItem("ACCESS_TOKEN");
+
+            if (!token) {
+                console.warn("No token found for WebSocket connection");
+                return;
+            }
+
+
         const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
-        const ws = new WebSocket(`${wsProtocol}://chathive-56su.onrender.com/ws/chat/${roomName}/`);        
+        const ws = new WebSocket(`${wsProtocol}://chathive-56su.onrender.com/ws/chat/${roomName}/?token=${token}`);        
         setSocket(ws);
 
         ws.onmessage = (event) => {
@@ -45,6 +54,15 @@ function Chat() {
         }
 
             setMessages((prev) => [...prev, data]);
+        };
+
+
+        ws.onclose = (event) => {
+        console.warn("WebSocket connection closed:", event);
+        // alert("WebSocket connection was closed. Please log in again.");
+        toast.error("WebSocket connection was closed. Please log in again.");
+        // Optionally redirect
+        // navigate("/login");
         };
 
         api.get(`messages/${roomName}/`).then((res) => {
