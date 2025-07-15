@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import api from "../../api";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,6 +16,7 @@ function Chat() {
     const [socket, setSocket] = useState(null);
     const dispatch = useDispatch();
     const [reconnectAttempts, setReconnectAttempts] = useState(0);
+    const pendingMessagesRef = useRef([]);
 
 
     useEffect(() => {
@@ -65,6 +66,21 @@ function Chat() {
             return;
         }
         setMessages(prev => [...prev, data]);
+        };
+
+        newSocket.onopen = () => {
+            console.log("✅ Reconnected. Sending queued messages...");
+
+            while (pendingMessagesRef.current.length > 0) {
+                const pendingMsg = pendingMessagesRef.current.shift();
+                try {
+                    newSocket.send(JSON.stringify(pendingMsg));
+                } catch (e) {
+                    console.error("❌ Failed to resend queued message:", pendingMsg);
+                    pendingMessagesRef.current.unshift(pendingMsg); // push back if still failing
+                    break; // don't try the rest yet
+                }
+            }
         };
 
         newSocket.onerror = (e) => {
@@ -133,32 +149,35 @@ function Chat() {
     }, [roomName]);
 
 const sendMessage = () => {
+    if (message.trim() === "") return;
+
+    const payload = {
+        message,
+        username: currentUser?.username,
+        room: roomName,
+    };
+
     if (!socket || socket.readyState !== WebSocket.OPEN) {
-        toast.error("⚠️ Connection lost. Unable to send message.");
-        console.warn("❌ WebSocket is not open. Message not sent.");
-        attemptReconnect(); 
+        toast.warning("⚠️ Connection lost. Queuing message.");
+        pendingMessagesRef.current.push(payload); // 💾 store for later
+        console.warn("❌ Queuing message:", payload);
+        setMessage("");
+        attemptReconnect();
         return;
     }
 
-    if (message.trim() === "") {
-        return; // don't send empty messages
-    }
-
     try {
-        socket.send(
-            JSON.stringify({ 
-                message, 
-                username: currentUser?.username, 
-                room: roomName  
-            })
-        );
+        socket.send(JSON.stringify(payload));
         setMessage("");
     } catch (error) {
-        console.error("🚨 Failed to send message:", error);
-        toast.error("❌ Failed to send message. Please try again.");
-        attemptReconnect(); 
+        console.error("🚨 Send failed. Queuing:", error);
+        pendingMessagesRef.current.push(payload);
+        toast.error("❌ Message failed. Queued for retry.");
+        setMessage("");
+        attemptReconnect();
     }
 };
+
 
 
 
